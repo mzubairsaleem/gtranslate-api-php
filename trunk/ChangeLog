@@ -1,3 +1,8 @@
+0.7.7
+ - Updated languages file, issue [28]
+ - Updated version on GTranslate.php, issue [29]
+ - Fixed the issue that was preventing Nowergian translation to be done, issue [26]
+ - Added Referrer parameter setter, issue [22]
 0.7.6
 - Bug fixing
  Afrikaans support fix, issue [24]

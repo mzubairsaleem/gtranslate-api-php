@@ -21,7 +21,7 @@
 *
 * @author Jose da Silva <jose@josedasilva.net>
 * @since 2009/11/18
-* @version 0.7.4
+* @version 0.7.7
 * @licence LGPL v3
 *
 * <code>
@@ -83,7 +83,7 @@ class GTranslate
         * @access private
         * @var String 
         */
-	private $available_languages_file 	= "languages.ini";
+	private $available_languages_file 	= "languages.v2.ini";
 	
         /**
         * Holder to the parse of the ini file
@@ -106,12 +106,19 @@ class GTranslate
 	*/
 	private $user_ip = null;
 
+	/**
+	* HTTP Url of the translated page
+	* @access private
+	* @var string
+	*/
+	private $http_referer	=	'';
+
         /**
         * Constructor sets up {@link $available_languages}
         */
 	public function __construct()
 	{
-		$this->available_languages = parse_ini_file("languages.ini");
+		$this->available_languages = parse_ini_file($this->available_languages_file);
 	}
 
         /**
@@ -197,6 +204,20 @@ class GTranslate
 		return false;
 	}
 	
+	/**
+	* Define the http referer for the translation
+ 	* @access public
+	* @param string $utl
+	* return boolean
+	*/
+	public function setHttpReferer($url) {
+  		if (!empty($url)) {
+	    		$this->http_referer = $url;
+			return true;
+  		}
+		return false;
+	}
+	
         /**
         * Query the Google(TM) endpoint 
         * @access private
@@ -207,6 +228,7 @@ class GTranslate
 
 	public function query($lang_pair,$string)
 	{
+
 		$query_url = $this->urlFormat($lang_pair,$string);
 		$response = $this->{"request".ucwords($this->request_type)}($query_url);
 		return $response;
@@ -221,6 +243,7 @@ class GTranslate
 
 	private function requestHttp($url)
 	{
+
 		return GTranslate::evalResponse(json_decode(file_get_contents($this->url."?".$url)));
 	}
 
@@ -236,7 +259,7 @@ class GTranslate
 		$ch = curl_init();
 		curl_setopt($ch, CURLOPT_URL, $this->url);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-		curl_setopt($ch, CURLOPT_REFERER, !empty($_SERVER["HTTP_REFERER"]) ? $_SERVER["HTTP_REFERER"] : "");
+		curl_setopt($ch, CURLOPT_REFERER, !empty($this->http_referer) ? $this->http_referer : $_SERVER["HTTP_REFERER"] );
 		curl_setopt($ch, CURLOPT_POST, 1);
 		curl_setopt($ch, CURLOPT_POSTFIELDS, $url);
 		$body = curl_exec($ch);
@@ -254,6 +277,7 @@ class GTranslate
 
 	private function evalResponse($json_response)
 	{
+
 		switch($json_response->responseStatus)
 		{
 			case 200:
@@ -282,10 +306,12 @@ class GTranslate
 		$language_list_v  	= 	array_map( "strtolower", array_values($language_list) );
 		$language_list_k 	= 	array_map( "strtolower", array_keys($language_list) );
 		$valid_languages 	= 	false;
+
 		if( TRUE == in_array($languages[0],$language_list_v) AND TRUE == in_array($languages[1],$language_list_v) )
 		{
 			$valid_languages 	= 	true;	
 		}
+
 
 		if( FALSE === $valid_languages AND TRUE == in_array($languages[0],$language_list_k) AND TRUE == in_array($languages[1],$language_list_k) )
 		{
