@@ -79,6 +79,13 @@ class GTranslate
 	private $request_type = "http";
 
         /**
+        * Valid languages file
+        * @access private
+        * @var String 
+        */
+	private $valid_languages_file = array("languages.ini", "languages.v2.ini");
+
+        /**
         * Path to available languages file
         * @access private
         * @var String 
@@ -118,9 +125,33 @@ class GTranslate
         */
 	public function __construct()
 	{
-		$this->available_languages = parse_ini_file($this->available_languages_file);
+		$this->http_referer = (!empty($_SERVER["HTTP_REFERER"]) ? $_SERVER["HTTP_REFERER"] : '');
 	}
 
+	/**
+	* Set language file to use
+	* @access public
+	* @param string $file
+	*/	
+	public function setLanguageFile($language_file)
+	{		
+		if(in_array($language_file, $this->valid_languages_file))
+		{
+			$this->available_languages_file = $language_file;
+			return true;			
+		}
+		return false;
+	}
+
+	/**
+	* Parse available language from language file
+	* @access private
+	*/	
+	private function parseLanguageFile()
+	{
+		$this->available_languages = parse_ini_file($this->available_languages_file);
+	}	
+	
         /**
         * URL Formater to use on request
         * @access private
@@ -259,7 +290,7 @@ class GTranslate
 		$ch = curl_init();
 		curl_setopt($ch, CURLOPT_URL, $this->url);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-		curl_setopt($ch, CURLOPT_REFERER, !empty($this->http_referer) ? $this->http_referer : $_SERVER["HTTP_REFERER"] );
+		curl_setopt($ch, CURLOPT_REFERER, $this->http_referer);
 		curl_setopt($ch, CURLOPT_POST, 1);
 		curl_setopt($ch, CURLOPT_POSTFIELDS, $url);
 		$body = curl_exec($ch);
@@ -339,6 +370,11 @@ class GTranslate
 
 	public function __call($name,$args)
 	{
+		if(empty($this->available_languages))
+		{
+			$this->parseLanguageFile();
+		}
+		
 		$languages_list 	= 	explode("_to_",strtolower($name));
 		$languages = $this->isValidLanguage($languages_list);
 
