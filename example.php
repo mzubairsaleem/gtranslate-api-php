@@ -18,6 +18,8 @@ $translate_string = "Das ist wunderschön";
 	echo "[CURL] Translating [$translate_string] German to English => ".$gt->german_to_english($translate_string)."\n";
 	$translate_string	=	'hello';
 	echo "[CURL] Translating [$translate_string] English to German=> ".$gt->english_to_german($translate_string)."\n";
+	echo "[CURL] Translating [$translate_string] English to Portuguese=> ".$gt->english_to_portuguese($translate_string)."\n";
+	echo "[CURL] Translating [$translate_string] English to Italian=> ".$gt->english_to_italian($translate_string)."\n";
 
 } catch (GTranslateException $ge)
  {
