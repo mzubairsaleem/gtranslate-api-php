@@ -1,3 +1,9 @@
+0.7.9
+- Applied improvements sent by (Azhari Harahap)
+ - Removing notice Notice: Undefined index:  HTTP_REFERER when runing script from console
+ - Created a setLanguageFile($file) method to define language file to use
+0.7.8
+- Fixed issues on languages file [35]
 0.7.7
  - Updated languages file, issue [28]
  - Updated version on GTranslate.php, issue [29]
