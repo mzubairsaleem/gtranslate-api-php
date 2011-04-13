@@ -1,3 +1,6 @@
+0.7.9.1
+ - Removed ' from languages.v2.ini in order to manage compatibility with php < 5.3
+ / Added more examples into example.php
 0.7.9
 - Applied improvements sent by (Azhari Harahap)
  - Removing notice Notice: Undefined index:  HTTP_REFERER when runing script from console
